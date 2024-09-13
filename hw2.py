@@ -52,7 +52,7 @@ def google_dem(question_to_ask, api_key):
 
 
 # Show title and description
-st.title("Karan Shah📄 Document Question Answering")
+st.title("📄 Document Question Answering")
 st.write(
     "Enter a URL below and ask a question about it – GPT, Gemini, or Cohere will answer! "
     "To use this app, you need to provide an API key for OpenAI, Gemini, or Cohere."
