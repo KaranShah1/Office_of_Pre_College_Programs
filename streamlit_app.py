@@ -16,7 +16,7 @@ with st.sidebar:
 
 # Load the appropriate page based on the user's selection
 if selected_page == "Test Bot":
-    st.title("HW - 1 ")
+    st.title("HW - 10 ")
     # Execute the hw1.py code
     exec(open("hw1.py").read())  # This will run the content of hw1.py
 
