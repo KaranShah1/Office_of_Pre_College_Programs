@@ -16,11 +16,11 @@ with st.sidebar:
 
 # Load the appropriate page based on the user's selection
 if selected_page == "Test Bot":
-    st.title("HW - 10 ")
+    st.title("SU Office of Pre-College Programs  ")
     # Execute the hw1.py code
     exec(open("hw1.py").read())  # This will run the content of hw1.py
 
 elif selected_page == "Pre-College Bot":
-    st.title("HW - 2")
+    st.title("Syracuse University Office of Pre-College Programs")
     # Execute the hw2.py code
     exec(open("hw2.py").read())  # This will run the content of hw2.py
