@@ -8,7 +8,7 @@ st.set_page_config(page_title="Multi-Page App", layout="wide")
 with st.sidebar:
     selected_page = option_menu(
         "Pre College Bot",
-        ["Test Bot", "Pre-College Bot", "Smart Pre-College Bot", "Staff Pre-College Bot],
+        ["Test Bot", "Pre-College Bot", "Smart Pre-College Bot", "SRC Pre-College Bot],
         icons=['beaker', 'beaker', 'beaker', 'beaker'],
         menu_icon="cast", 
         default_index=0,
@@ -30,7 +30,7 @@ elif selected_page == "Smart Pre-College Bot":
     # Execute the hw2.py code
     exec(open("cps3.py").read())  # This will run the content of cps3.py
 
-elif selected_page == "Staff Pre College Bot":
+elif selected_page == "SRC Pre College Bot":
     st.title("Syracuse University Office of Pre-College Programs")
     # Execute the cps4.py code
     exec(open("cps4.py").read())  # This will run the content of cps4.py
