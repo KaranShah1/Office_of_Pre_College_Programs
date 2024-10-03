@@ -21,7 +21,7 @@ def ensure_openai_client():
         st.session_state.openai_client = OpenAI(api_key=api_key)
 
 # Function to create the ChromaDB collection
-def create_lab4_collection():
+def create_CPS_collection():
     if 'PreCollege_vectorDB' not in st.session_state:
         # Set up the ChromaDB client
         persist_directory = os.path.join(os.getcwd(), "chroma_db")
@@ -130,7 +130,7 @@ st.title("SRC Pre-College Bot")
 if not st.session_state.system_ready:
     # Show a spinner while processing documents
     with st.spinner("Processing documents and preparing the system..."):
-        st.session_state.collection = create_lab4_collection()
+        st.session_state.collection = create_CPS_collection()
         if st.session_state.collection:
             # Set the system as ready and show a success message
             st.session_state.system_ready = True
