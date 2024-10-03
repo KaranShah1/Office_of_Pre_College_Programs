@@ -22,11 +22,11 @@ def ensure_openai_client():
 
 # Function to create the ChromaDB collection
 def create_lab4_collection():
-    if 'Lab4_vectorDB' not in st.session_state:
+    if 'PreCollege_vectorDB' not in st.session_state:
         # Set up the ChromaDB client
         persist_directory = os.path.join(os.getcwd(), "chroma_db")
         client = chromadb.PersistentClient(path=persist_directory)
-        collection = client.get_or_create_collection("Lab4Collection")
+        collection = client.get_or_create_collection("CpsCollection")
 
         ensure_openai_client()
 
@@ -63,9 +63,9 @@ def create_lab4_collection():
                     st.error(f"Error processing {filename}: {str(e)}")
 
         # Store the collection in session state
-        st.session_state.Lab4_vectorDB = collection
+        st.session_state.PreCollege_vectorDB = collection
 
-    return st.session_state.Lab4_vectorDB
+    return st.session_state.PreCollege_vectorDB
 
 # Function to query the vector database
 def query_vector_db(collection, query):
@@ -124,7 +124,7 @@ if 'collection' not in st.session_state:
     st.session_state.collection = None
 
 # Page content
-st.title("Lab 4 - Document Chatbot")
+st.title("SRC Pre-College Bot")
 
 # Check if the system is ready, if not, prepare it
 if not st.session_state.system_ready:
