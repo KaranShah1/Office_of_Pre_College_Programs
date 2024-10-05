@@ -10,5 +10,6 @@ bs4
 tiktoken
 chromadb
 PyPDF2
-
+protobuf==3.20
+pysqlite3-binary
 
