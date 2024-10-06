@@ -9,7 +9,7 @@ with st.sidebar:
     selected_page = option_menu(
         "Pre College Bot",
         ["Test Bot", "Pre-College Bot", "Smart Pre-College Bot"],
-        icons=['beaker', 'beaker', 'beaker', 'beaker'],
+        icons=['beaker', 'beaker', 'beaker'],
         menu_icon="cast", 
         default_index=0,
     )
