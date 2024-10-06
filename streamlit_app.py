@@ -29,9 +29,3 @@ elif selected_page == "Smart Pre-College Bot":
     st.title("Syracuse University Office of Pre-College Programs")
     # Execute the hw2.py code
     exec(open("cps3.py").read())  # This will run the content of cps3.py
-
-elif selected_page == "SRC Pre-College Bot":
-    st.title("Syracuse University Office of Pre-College Programs")
-   
-    exec(open("cps4.py").read())  # This will run the content of cps4.py
-
