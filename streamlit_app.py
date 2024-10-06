@@ -8,7 +8,7 @@ st.set_page_config(page_title="Multi-Page App", layout="wide")
 with st.sidebar:
     selected_page = option_menu(
         "Pre College Bot",
-        ["Test Bot", "Pre-College Bot", "Smart Pre-College Bot", "SRC Pre-College Bot"],
+        ["Test Bot", "Pre-College Bot", "Smart Pre-College Bot"],
         icons=['beaker', 'beaker', 'beaker', 'beaker'],
         menu_icon="cast", 
         default_index=0,
