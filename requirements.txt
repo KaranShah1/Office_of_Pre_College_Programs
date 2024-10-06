@@ -10,6 +10,7 @@ beautifulsoup4
 tiktoken
 PyMuPDF
 chromadb
+pysqlite3
 pysqlite3-binary
 PyPDF2
 protobuf>=3.20,<5.0
