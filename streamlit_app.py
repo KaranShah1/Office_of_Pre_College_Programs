@@ -32,5 +32,6 @@ elif selected_page == "Smart Pre-College Bot":
 
 elif selected_page == "SRC Pre-College Bot":
     st.title("Syracuse University Office of Pre-College Programs")
-    # Execute the cps4.py code
+   
     exec(open("cps4.py").read())  # This will run the content of cps4.py
+
