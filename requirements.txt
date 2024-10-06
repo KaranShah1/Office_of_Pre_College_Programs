@@ -6,12 +6,11 @@ google-generativeai
 cohere
 python-dotenv
 bs4
-pysqlite3
 beautifulsoup4
 tiktoken
 PyMuPDF
 chromadb
 pysqlite3-binary
 PyPDF2
+protobuf>=3.20,<5.0
 scikit-learn
-sqlite3
