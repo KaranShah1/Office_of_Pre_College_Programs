@@ -124,7 +124,7 @@ if 'collection' not in st.session_state:
     st.session_state.collection = None
 
 # Page content
-st.title("Lab 4 - Document Chatbot")
+# st.title("Lab 4 - Document Chatbot")
 
 # Check if the system is ready, if not, prepare it
 if not st.session_state.system_ready:
