@@ -40,7 +40,7 @@ st.set_page_config(page_title="Multi-Page App", layout="wide")
 Define navigation using a simple option menu
 with st.sidebar:
     selected_page = option_menu(
-        "Pre College Bot",
+        "Edu-Guide Bot",
         ["Assignment Upload", "Solution Assistant", "Grading Insights"],
         icons=['beaker', 'beaker', 'beaker', 'beaker'],
         menu_icon="cast", 
