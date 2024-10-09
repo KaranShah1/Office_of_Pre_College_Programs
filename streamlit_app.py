@@ -37,7 +37,7 @@ st.set_page_config(page_title="Multi-Page App", layout="wide")
 
 
 
-Define navigation using a simple option menu
+#Define navigation using a simple option menu
 with st.sidebar:
     selected_page = option_menu(
         "Edu-Guide Bot",
