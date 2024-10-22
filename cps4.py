@@ -105,7 +105,7 @@ Answer:"""
         response_stream = st.session_state.openai_client.chat.completions.create(
             model="gpt-4o",  # Using the latest GPT-4 model
             messages=[
-                {"role": "system", "content": "You are a helpful assistant."},
+                {"role": "system", "content": "You are a supportive assistant who will be assisting Summer Residential Counselors with their training materials. Please ensure that you provide them with helpful guidance"},
                 {"role": "user", "content": prompt}
             ],
             stream=True  # Enable streaming
