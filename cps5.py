@@ -3,14 +3,12 @@ from openai import OpenAI
 import os
 from PyPDF2 import PdfReader
 
-
 # Workaround for sqlite3 issue in Streamlit Cloud
 __import__('pysqlite3')
 import sys
 sys.modules['sqlite3'] = sys.modules.pop('pysqlite3')
 
 import chromadb
-
 
 # Function to ensure the OpenAI client is initialized
 def ensure_openai_client():
@@ -155,59 +153,68 @@ if st.session_state.system_ready and st.session_state.collection:
             with st.chat_message("user" if role == "You" else "assistant"):
                 st.markdown(content)
 
+#START TESTING
 
-
-
-
-
-
-
-
-
-#TESTING
-    
 # Choose summary option
-    Answer_option = st.sidebar.selectbox(
-        "Choose a Answer type:",
-        ["Summarize in 100 words", "Summarize in 2 connecting paragraphs", "Summarize in 5 bullet points"]
-    )
+Answer_option = st.sidebar.selectbox(
+    "Choose a Answer type:",
+    ["Summarize in 100 words", "Summarize in 2 connecting paragraphs", "Summarize in 5 bullet points"]
+)
 
-    # Dropdown menu for language selection
-    language_option = st.selectbox(
-        "Choose output language:",
-        ["English", "French", "Spanish"]
-    )
+# Dropdown menu for language selection
+language_option = st.sidebar.selectbox(
+    "Choose output language:",
+    ["English", "French", "Spanish"]
+)
 
-   
+# Ensure documents are available in the session state
+if 'Lab4_vectorDB' in st.session_state:
+    # Collection already exists and is processed
+    pdf_dir = os.path.join(os.getcwd(), "Lab4_datafiles")
 
-    if url and question:
-        # Process the URL and extract its text content
-       
-        if document:
-            # Adjust the prompt based on summary and language options
-            if summary_option == "Summarize in 100 words":
-                prompt = f"Summarize the following document in 100 words: {pdf_dir, filename}"
-            elif summary_option == "Summarize in 2 connecting paragraphs":
-                prompt = f"Summarize the following document in 2 connecting paragraphs: {pdf_dir, filename}"
-            elif summary_option == "Summarize in 5 bullet points":
-                prompt = f"Summarize the following document in 5 bullet points: {pdf_dir, filename}"
+    # Processing the collection and generating summaries based on user input
+    if pdf_dir and os.listdir(pdf_dir):
+        # Go through each document in the directory (already processed earlier)
+        for filename in os.listdir(pdf_dir):
+            if filename.endswith(".pdf"):
+                filepath = os.path.join(pdf_dir, filename)
 
-            # Add the language selection to the prompt
-            prompt += f"\n\nOutput the Answer in {language_option}."
+                # Adjust the prompt based on summary and language options
+                if Answer_option == "Summarize in 100 words":
+                    prompt = f"Summarize the following document in 100 words: {filepath}"
+                elif Answer_option == "Summarize in 2 connecting paragraphs":
+                    prompt = f"Summarize the following document in 2 connecting paragraphs: {filepath}"
+                elif Answer_option == "Summarize in 5 bullet points":
+                    prompt = f"Summarize the following document in 5 bullet points: {filepath}"
 
-#TESTING
+                # Add the language selection to the prompt
+                prompt += f"\n\nOutput the Answer in {language_option}."
 
+                # Display the selected file and the generated prompt
+                st.write(f"Document: {filename}")
+                st.write(f"Generated Prompt: {prompt}")
 
+                # Call the OpenAI client to get the summary based on the selected options
+                response_stream = get_chatbot_response(Answer_option, prompt)
 
+                # Display the generated summary
+                if response_stream:
+                    with st.chat_message("assistant"):
+                        response_placeholder = st.empty()
+                        full_response = ""
+                        for chunk in response_stream:
+                            if chunk.choices[0].delta.content is not None:
+                                full_response += chunk.choices[0].delta.content
+                                response_placeholder.markdown(full_response + "▌")
+                        response_placeholder.markdown(full_response)
+                else:
+                    st.error(f"Failed to generate summary for {filename}")
+else:
+    st.error("No documents found or processed in Lab4_vectorDB collection. Please check the setup.")
 
+#END TEST
 
-
-    
-
-
-    
-
-    # User input
+# User input
     user_input = st.chat_input("Ask a question about the documents:")
 
     if user_input:
