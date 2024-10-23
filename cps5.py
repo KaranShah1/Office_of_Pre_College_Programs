@@ -126,7 +126,6 @@ if 'collection' not in st.session_state:
 
 # Check if the system is ready, if not, prepare it
 if not st.session_state.system_ready:
-   
     # Show a spinner while processing documents
     with st.spinner("Processing documents and preparing the system..."):
         st.session_state.collection = create_lab4_collection()
@@ -154,68 +153,20 @@ if st.session_state.system_ready and st.session_state.collection:
             with st.chat_message("user" if role == "You" else "assistant"):
                 st.markdown(content)
 
-#START TESTING
+    # START TESTING
+    # Choose summary option
+    answer_option = st.sidebar.selectbox(
+        "Choose an Answer type:",
+        ["Summarize in 100 words", "Summarize in 2 connecting paragraphs", "Summarize in 5 bullet points"]
+    )
 
-# Choose summary option
-Answer_option = st.sidebar.selectbox(
-    "Choose a Answer type:",
-    ["Summarize in 100 words", "Summarize in 2 connecting paragraphs", "Summarize in 5 bullet points"]
-)
+    # Dropdown menu for language selection
+    language_option = st.selectbox(
+        "Choose output language:",
+        ["English", "French", "Spanish"]
+    )
 
-# Dropdown menu for language selection
-language_option = st.sidebar.selectbox(
-    "Choose output language:",
-    ["English", "French", "Spanish"]
-)
-
-# Ensure documents are available in the session state
-if 'Lab4_vectorDB' in st.session_state:
-    # Collection already exists and is processed
-    pdf_dir = os.path.join(os.getcwd(), "Lab4_datafiles")
-
-    # Processing the collection and generating summaries based on user input
-    if pdf_dir and os.listdir(pdf_dir):
-        # Go through each document in the directory (already processed earlier)
-        for filename in os.listdir(pdf_dir):
-            if filename.endswith(".pdf"):
-                filepath = os.path.join(pdf_dir, filename)
-
-                # Adjust the prompt based on summary and language options
-                if Answer_option == "Summarize in 100 words":
-                    prompt = f"Summarize the following document in 100 words: {filepath}"
-                elif Answer_option == "Summarize in 2 connecting paragraphs":
-                    prompt = f"Summarize the following document in 2 connecting paragraphs: {filepath}"
-                elif Answer_option == "Summarize in 5 bullet points":
-                    prompt = f"Summarize the following document in 5 bullet points: {filepath}"
-
-                # Add the language selection to the prompt
-                prompt += f"\n\nOutput the Answer in {language_option}."
-
-                # Display the selected file and the generated prompt
-                st.write(f"Document: {filename}")
-                st.write(f"Generated Prompt: {prompt}")
-
-                # Call the OpenAI client to get the summary based on the selected options
-                response_stream = get_chatbot_response(Answer_option, prompt)
-
-                # Display the generated summary
-                if response_stream:
-                    with st.chat_message("assistant"):
-                        response_placeholder = st.empty()
-                        full_response = ""
-                        for chunk in response_stream:
-                            if chunk.choices[0].delta.content is not None:
-                                full_response += chunk.choices[0].delta.content
-                                response_placeholder.markdown(full_response + "▌")
-                        response_placeholder.markdown(full_response)
-                else:
-                    st.error(f"Failed to generate summary for {filename}")
-else:
-    st.error("No documents found or processed in Lab4_vectorDB collection. Please check the setup.")
-
-#END TEST
-
-# User input
+    # User input
     user_input = st.chat_input("Ask a question about the documents:")
 
     if user_input:
@@ -248,8 +199,10 @@ else:
         with st.expander("Relevant documents used"):
             for doc in relevant_docs:
                 st.write(f"- {doc}")
+    # END TEST
 
-elif not st.session_state.system_ready:
-    st.info("The system is still preparing. Please wait...")
 else:
-    st.error("Failed to create or load the document collection. Please check the file path and try again.")
+    if not st.session_state.system_ready:
+        st.info("The system is still preparing. Please wait...")
+    else:
+        st.error("Failed to create or load the document collection. Please check the file path and try again.")
