@@ -59,6 +59,28 @@ def create_lab4_collection():
 
     return st.session_state.Lab4_vectorDB
 
+# Function to query the vector database
+def query_vector_db(collection, query):
+    ensure_openai_client()
+    try:
+        # Generate embedding for the query
+        response = st.session_state.openai_client.embeddings.create(
+            input=query, model="text-embedding-ada-002"
+        )
+        query_embedding = response.data[0].embedding
+
+        # Query the ChromaDB collection with the generated embedding
+        results = collection.query(
+            query_embeddings=[query_embedding],
+            n_results=3
+        )
+        # Return the relevant document text and their filenames
+        return results['documents'], [result['filename'] for result in results['metadatas']]
+    except Exception as e:
+        st.error(f"Error querying the database: {str(e)}")
+        return [], []
+
+
 # Function to summarize document based on user choice
 def summarize_document(document, summary_option, language_option):
     ensure_openai_client()
@@ -111,17 +133,20 @@ if st.session_state.get("system_ready", False):
     if st.session_state.collection:
         user_input = st.text_area("Ask a question or request a summary:")
         
-        if user_input:
-            relevant_texts, relevant_docs = query_vector_db(st.session_state.collection, user_input)
-            context = "\n".join(relevant_texts)
-            
-            # Generate summary based on options
-            summary = summarize_document(context, summary_option, language_option)
-            
-            if summary:
-                st.subheader("Summary")
-                st.write(summary)
-                st.expander("Relevant documents", expanded=False).write(relevant_docs)
+        # Query vector DB and get relevant documents and context
+if user_input:
+    relevant_texts, relevant_docs = query_vector_db(st.session_state.collection, user_input)
+    context = "\n".join(relevant_texts)
+    
+    # Generate summary based on user input
+    summary = summarize_document(context, summary_option, language_option)
+    
+    if summary:
+        st.subheader("Summary")
+        st.write(summary)
+        with st.expander("Relevant documents used"):
+            st.write("\n".join(relevant_docs))
+
 
 else:
     st.info("System is preparing. Please wait...")
