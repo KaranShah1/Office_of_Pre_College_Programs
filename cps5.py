@@ -86,24 +86,26 @@ def query_vector_db(collection, query):
         return [], []
 
 # Function to get chatbot response using OpenAI's GPT model
-def get_chatbot_response(query, context, language_option):
+def get_chatbot_response(query, context, language_option, answer_option):
     ensure_openai_client()
+    
+    # Adjust the prompt based on summary and language options
+    if answer_option == "Summarize in 100 words":
+        prompt = f"Summarize the following document in 100 words in {language_option}: {context}"
+    elif answer_option == "Summarize in 2 connecting paragraphs":
+        prompt = f"Summarize the following document in 2 connecting paragraphs in {language_option}: {context}"
+    elif answer_option == "Summarize in 5 bullet points":
+        prompt = f"Summarize the following document in 5 bullet points in {language_option}: {context}"
+
     # Construct the prompt for the GPT model
-    prompt = f"""You are an AI assistant with knowledge from specific documents. Use the following context to answer the user's question. If the information is not in the context, say you don't know based on the available information.
-
-Context:
-{context}
-
-User Question: {query}
-
-Answer:"""
-
+    prompt += f"\n\nUser Question: {query}\nAnswer:"
+    
     try:
         # Generate streaming response using OpenAI's chat completion
         response_stream = st.session_state.openai_client.chat.completions.create(
             model="gpt-4o",  # Using the latest GPT-4 model
             messages=[
-                {"role": "system", "content": "You are a supportive assistant who will be assisting Summer Residential Counselors with their training materials. Please ensure that you provide them with helpful guidance"},
+                {"role": "system", "content": "You are a supportive assistant who will be assisting Summer Residential Counselors with their training materials. Please ensure that you provide them with helpful guidance."},
                 {"role": "user", "content": prompt}
             ],
             stream=True  # Enable streaming
@@ -122,15 +124,13 @@ if 'collection' not in st.session_state:
     st.session_state.collection = None
 
 # Page content
-# st.title("Lab 4 - Document Chatbot")
+st.title("Lab 4 - Document Chatbot")
 
 # Check if the system is ready, if not, prepare it
 if not st.session_state.system_ready:
-    # Show a spinner while processing documents
     with st.spinner("Processing documents and preparing the system..."):
         st.session_state.collection = create_lab4_collection()
         if st.session_state.collection:
-            # Set the system as ready and show a success message
             st.session_state.system_ready = True
             st.success("AI ChatBot is Ready!!!")
         else:
@@ -143,17 +143,13 @@ if st.session_state.system_ready and st.session_state.collection:
     # Display chat history
     for message in st.session_state.chat_history:
         if isinstance(message, dict):
-            # New format (dictionary with 'role' and 'content' keys)
             with st.chat_message(message["role"]):
                 st.markdown(message["content"])
         elif isinstance(message, tuple):
-            # Old format (tuple with role and content)
             role, content = message
-            # Convert 'You' to 'user', and assume any other role is 'assistant'
             with st.chat_message("user" if role == "You" else "assistant"):
                 st.markdown(content)
 
-    # START TESTING
     # Choose summary option
     answer_option = st.sidebar.selectbox(
         "Choose an Answer type:",
@@ -167,47 +163,34 @@ if st.session_state.system_ready and st.session_state.collection:
     )
 
     # User input
-user_input = st.chat_input("Ask a question about the documents:")
+    user_input = st.chat_input("Ask a question about the documents:")
 
-if user_input:
-    # Display user message
-    with st.chat_message("user"):
-        st.markdown(user_input)
+    if user_input:
+        with st.chat_message("user"):
+            st.markdown(user_input)
 
-    # Query the vector database
-    relevant_texts, relevant_docs = query_vector_db(st.session_state.collection, user_input)
-    context = "\n".join(relevant_texts)
+        # Query the vector database
+        relevant_texts, relevant_docs = query_vector_db(st.session_state.collection, user_input)
+        context = "\n".join(relevant_texts)
 
-    # Adjust the prompt based on summary and language options
-    if answer_option == "Summarize in 100 words":
-        prompt = f"Summarize the following document in 100 words: {context}"
-    elif answer_option == "Summarize in 2 connecting paragraphs":
-        prompt = f"Summarize the following document in 2 connecting paragraphs: {context}"
-    elif answer_option == "Summarize in 5 bullet points":
-        prompt = f"Summarize the following document in 5 bullet points: {context}"
+        # Get streaming chatbot response with selected language
+        response_stream = get_chatbot_response(user_input, context, language_option, answer_option)
 
-    # Debugging: print the language option and prompt
-    print(f"Language option selected: {language_option}")
-    print(f"Prompt sent to OpenAI: {prompt}")
+        # Display AI response
+        with st.chat_message("assistant"):
+            response_placeholder = st.empty()
+            full_response = ""
+            for chunk in response_stream:
+                if chunk.choices[0].delta.content is not None:
+                    full_response += chunk.choices[0].delta.content
+                    response_placeholder.markdown(full_response + "▌")
+            response_placeholder.markdown(full_response)
 
-    # Get streaming chatbot response with selected language
-    response_stream = get_chatbot_response(user_input, context, language_option)
+        # Add to chat history (new format)
+        st.session_state.chat_history.append({"role": "user", "content": user_input})
+        st.session_state.chat_history.append({"role": "assistant", "content": full_response})
 
-    # Display AI response
-    with st.chat_message("assistant"):
-        response_placeholder = st.empty()
-        full_response = ""
-        for chunk in response_stream:
-            if chunk.choices[0].delta.content is not None:
-                full_response += chunk.choices[0].delta.content
-                response_placeholder.markdown(full_response + "▌")
-        response_placeholder.markdown(full_response)
-
-    # Add to chat history (new format)
-    st.session_state.chat_history.append({"role": "user", "content": user_input})
-    st.session_state.chat_history.append({"role": "assistant", "content": full_response})
-
-    # Display relevant documents
-    with st.expander("Relevant documents used"):
-        for doc in relevant_docs:
-            st.write(f"- {doc}")
+        # Display relevant documents
+        with st.expander("Relevant documents used"):
+            for doc in relevant_docs:
+                st.write(f"- {doc}")
