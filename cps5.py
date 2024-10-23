@@ -155,6 +155,58 @@ if st.session_state.system_ready and st.session_state.collection:
             with st.chat_message("user" if role == "You" else "assistant"):
                 st.markdown(content)
 
+
+
+
+
+
+
+
+
+
+#TESTING
+    
+# Choose summary option
+    Answer_option = st.sidebar.selectbox(
+        "Choose a Answer type:",
+        ["Summarize in 100 words", "Summarize in 2 connecting paragraphs", "Summarize in 5 bullet points"]
+    )
+
+    # Dropdown menu for language selection
+    language_option = st.selectbox(
+        "Choose output language:",
+        ["English", "French", "Spanish"]
+    )
+
+   
+
+    if url and question:
+        # Process the URL and extract its text content
+       
+        if document:
+            # Adjust the prompt based on summary and language options
+            if summary_option == "Summarize in 100 words":
+                prompt = f"Summarize the following document in 100 words: {pdf_dir, filename}"
+            elif summary_option == "Summarize in 2 connecting paragraphs":
+                prompt = f"Summarize the following document in 2 connecting paragraphs: {pdf_dir, filename}"
+            elif summary_option == "Summarize in 5 bullet points":
+                prompt = f"Summarize the following document in 5 bullet points: {pdf_dir, filename}"
+
+            # Add the language selection to the prompt
+            prompt += f"\n\nOutput the Answer in {language_option}."
+
+#TESTING
+
+
+
+
+
+
+    
+
+
+    
+
     # User input
     user_input = st.chat_input("Ask a question about the documents:")
 
