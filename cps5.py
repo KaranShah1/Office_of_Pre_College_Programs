@@ -167,52 +167,47 @@ if st.session_state.system_ready and st.session_state.collection:
     )
 
     # User input
-    user_input = st.chat_input("Ask a question about the documents:")
+user_input = st.chat_input("Ask a question about the documents:")
 
-    if user_input:
-        # Display user message
-        with st.chat_message("user"):
-            st.markdown(user_input)
+if user_input:
+    # Display user message
+    with st.chat_message("user"):
+        st.markdown(user_input)
 
-        # Query the vector database
-        relevant_texts, relevant_docs = query_vector_db(st.session_state.collection, user_input)
-        context = "\n".join(relevant_texts)
+    # Query the vector database
+    relevant_texts, relevant_docs = query_vector_db(st.session_state.collection, user_input)
+    context = "\n".join(relevant_texts)
 
-        # Adjust the prompt based on summary and language options
-        if answer_option == "Summarize in 100 words":
-            prompt = f"Summarize the following document in 100 words: {context}"
-        elif answer_option == "Summarize in 2 connecting paragraphs":
-            prompt = f"Summarize the following document in 2 connecting paragraphs: {context}"
-        elif answer_option == "Summarize in 5 bullet points":
-            prompt = f"Summarize the following document in 5 bullet points: {context}"
+    # Adjust the prompt based on summary and language options
+    if answer_option == "Summarize in 100 words":
+        prompt = f"Summarize the following document in 100 words: {context}"
+    elif answer_option == "Summarize in 2 connecting paragraphs":
+        prompt = f"Summarize the following document in 2 connecting paragraphs: {context}"
+    elif answer_option == "Summarize in 5 bullet points":
+        prompt = f"Summarize the following document in 5 bullet points: {context}"
 
-        # Add the language selection to the prompt
-        prompt += f"\n\nOutput the Answer in {language_option}."
+    # Debugging: print the language option and prompt
+    print(f"Language option selected: {language_option}")
+    print(f"Prompt sent to OpenAI: {prompt}")
 
-        # Get streaming chatbot response
-        response_stream = get_chatbot_response(user_input, context, language_option)
+    # Get streaming chatbot response with selected language
+    response_stream = get_chatbot_response(user_input, context, language_option)
 
-        # Display AI response
-        with st.chat_message("assistant"):
-            response_placeholder = st.empty()
-            full_response = ""
-            for chunk in response_stream:
-                if chunk.choices[0].delta.content is not None:
-                    full_response += chunk.choices[0].delta.content
-                    response_placeholder.markdown(full_response + "▌")
-            response_placeholder.markdown(full_response)
+    # Display AI response
+    with st.chat_message("assistant"):
+        response_placeholder = st.empty()
+        full_response = ""
+        for chunk in response_stream:
+            if chunk.choices[0].delta.content is not None:
+                full_response += chunk.choices[0].delta.content
+                response_placeholder.markdown(full_response + "▌")
+        response_placeholder.markdown(full_response)
 
-        # Add to chat history (new format)
-        st.session_state.chat_history.append({"role": "user", "content": user_input})
-        st.session_state.chat_history.append({"role": "assistant", "content": full_response})
+    # Add to chat history (new format)
+    st.session_state.chat_history.append({"role": "user", "content": user_input})
+    st.session_state.chat_history.append({"role": "assistant", "content": full_response})
 
-        # Display relevant documents
-        with st.expander("Relevant documents used"):
-            for doc in relevant_docs:
-                st.write(f"- {doc}")
-    # END TEST
-
-elif not st.session_state.system_ready:
-    st.info("The system is still preparing. Please wait...")
-else:
-    st.error("Failed to create or load the document collection. Please check the file path and try again.")
+    # Display relevant documents
+    with st.expander("Relevant documents used"):
+        for doc in relevant_docs:
+            st.write(f"- {doc}")
