@@ -178,6 +178,17 @@ if st.session_state.system_ready and st.session_state.collection:
         relevant_texts, relevant_docs = query_vector_db(st.session_state.collection, user_input)
         context = "\n".join(relevant_texts)
 
+        # Adjust the prompt based on summary and language options
+        if answer_option == "Summarize in 100 words":
+            prompt = f"Summarize the following document in 100 words: {context}"
+        elif answer_option == "Summarize in 2 connecting paragraphs":
+            prompt = f"Summarize the following document in 2 connecting paragraphs: {context}"
+        elif answer_option == "Summarize in 5 bullet points":
+            prompt = f"Summarize the following document in 5 bullet points: {context}"
+
+        # Add the language selection to the prompt
+        prompt += f"\n\nOutput the Answer in {language_option}."
+
         # Get streaming chatbot response
         response_stream = get_chatbot_response(user_input, context)
 
@@ -201,8 +212,7 @@ if st.session_state.system_ready and st.session_state.collection:
                 st.write(f"- {doc}")
     # END TEST
 
+elif not st.session_state.system_ready:
+    st.info("The system is still preparing. Please wait...")
 else:
-    if not st.session_state.system_ready:
-        st.info("The system is still preparing. Please wait...")
-    else:
-        st.error("Failed to create or load the document collection. Please check the file path and try again.")
+    st.error("Failed to create or load the document collection. Please check the file path and try again.")
