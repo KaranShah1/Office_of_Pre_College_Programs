@@ -126,6 +126,7 @@ if 'collection' not in st.session_state:
 
 # Check if the system is ready, if not, prepare it
 if not st.session_state.system_ready:
+   
     # Show a spinner while processing documents
     with st.spinner("Processing documents and preparing the system..."):
         st.session_state.collection = create_lab4_collection()
