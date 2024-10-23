@@ -86,7 +86,7 @@ def query_vector_db(collection, query):
         return [], []
 
 # Function to get chatbot response using OpenAI's GPT model
-def get_chatbot_response(query, context):
+def get_chatbot_response(query, context, language_option):
     ensure_openai_client()
     # Construct the prompt for the GPT model
     prompt = f"""You are an AI assistant with knowledge from specific documents. Use the following context to answer the user's question. If the information is not in the context, say you don't know based on the available information.
@@ -190,7 +190,7 @@ if st.session_state.system_ready and st.session_state.collection:
         prompt += f"\n\nOutput the Answer in {language_option}."
 
         # Get streaming chatbot response
-        response_stream = get_chatbot_response(user_input, context)
+        response_stream = get_chatbot_response(user_input, context, language_option)
 
         # Display AI response
         with st.chat_message("assistant"):
