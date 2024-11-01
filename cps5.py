@@ -1,13 +1,4 @@
 import streamlit as st
-hide_menu = """
-<style>
-#MainMenu {
-    visibility:hidden;
-}
-</style>
-"""
-st.markdown(hide_menu,unsafe_allow_html=True)
-
 from openai import OpenAI
 import os
 from PyPDF2 import PdfReader
