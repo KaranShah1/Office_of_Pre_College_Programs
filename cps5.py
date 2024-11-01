@@ -12,15 +12,15 @@ import chromadb
 
 # Function to ensure the OpenAI client is initialized
 def ensure_openai_client():
-    if 'openai_client' not in session_state:
+    if 'openai_client' not in st.session_state:
         # Get the API key from Streamlit secrets
-        api_key = secrets["openai"]
+        api_key = st.secrets["openai"]
         # Initialize the OpenAI client and store it in session state
         st.session_state.openai_client = OpenAI(api_key=api_key)
 
 # Function to create the ChromaDB collection
 def create_lab4_collection():
-    if 'Lab4_vectorDB' not in session_state:
+    if 'Lab4_vectorDB' not in st.session_state:
         # Set up the ChromaDB client
         persist_directory = os.path.join(os.getcwd(), "chroma_db")
         client = chromadb.PersistentClient(path=persist_directory)
@@ -31,7 +31,7 @@ def create_lab4_collection():
         # Define the directory containing the PDF files
         pdf_dir = os.path.join(os.getcwd(), "Lab4_datafiles")
         if not os.path.exists(pdf_dir):
-            error(f"Directory not found: {pdf_dir}")
+            st.error(f"Directory not found: {pdf_dir}")
             return None
 
         # Process each PDF file in the directory
@@ -45,7 +45,7 @@ def create_lab4_collection():
                         text = ''.join([page.extract_text() or '' for page in pdf_reader.pages])
 
                     # Generate embeddings for the extracted text
-                    response = session_state.openai_client.embeddings.create(
+                    response = st.session_state.openai_client.embeddings.create(
                         input=text, model="text-embedding-3-small"
                     )
                     embedding = response.data[0].embedding
@@ -58,19 +58,19 @@ def create_lab4_collection():
                         embeddings=[embedding]
                     )
                 except Exception as e:
-                    error(f"Error processing {filename}: {str(e)}")
+                    st.error(f"Error processing {filename}: {str(e)}")
 
         # Store the collection in session state
-        session_state.Lab4_vectorDB = collection
+        st.session_state.Lab4_vectorDB = collection
 
-    return session_state.Lab4_vectorDB
+    return st.session_state.Lab4_vectorDB
 
 # Function to query the vector database
 def query_vector_db(collection, query):
     ensure_openai_client()
     try:
         # Generate embedding for the query
-        response = session_state.openai_client.embeddings.create(
+        response = st.session_state.openai_client.embeddings.create(
             input=query, model="text-embedding-3-small"
         )
         query_embedding = response.data[0].embedding
@@ -82,7 +82,7 @@ def query_vector_db(collection, query):
         )
         return results['documents'][0], [result['filename'] for result in results['metadatas'][0]]
     except Exception as e:
-        error(f"Error querying the database: {str(e)}")
+        st.error(f"Error querying the database: {str(e)}")
         return [], []
 
 # Function to get chatbot response using OpenAI's GPT model
@@ -102,7 +102,7 @@ def get_chatbot_response(query, context, language_option, answer_option):
     
     try:
         # Generate streaming response using OpenAI's chat completion
-        response_stream = session_state.openai_client.chat.completions.create(
+        response_stream = st.session_state.openai_client.chat.completions.create(
             model="gpt-4o",  # Using the latest GPT-4 model
             messages=[
                 {"role": "system", "content": "You are a supportive assistant who will be assisting Summer Residential Counselors with their training materials. Please ensure that you provide them with helpful guidance."},
@@ -112,73 +112,72 @@ def get_chatbot_response(query, context, language_option, answer_option):
         )
         return response_stream
     except Exception as e:
-        error(f"Error getting chatbot response: {str(e)}")
+        st.error(f"Error getting chatbot response: {str(e)}")
         return None
 
 # Initialize session state for chat history, system readiness, and collection
-if 'chat_history' not in session_state:
-    session_state.chat_history = []
-if 'system_ready' not in session_state:
-    session_state.system_ready = False
-if 'collection' not in session_state:
-    session_state.collection = None
+if 'chat_history' not in st.session_state:
+    st.session_state.chat_history = []
+if 'system_ready' not in st.session_state:
+    st.session_state.system_ready = False
+if 'collection' not in st.session_state:
+    st.session_state.collection = None
 
 # Page content
 
-
 # Check if the system is ready, if not, prepare it
-if not session_state.system_ready:
-    with spinner("Processing documents and preparing the system..."):
-        session_state.collection = create_lab4_collection()
-        if session_state.collection:
-            session_state.system_ready = True
-            success("AI ChatBot is Ready!!!")
+if not st.session_state.system_ready:
+    with st.spinner("Processing documents and preparing the system..."):
+        st.session_state.collection = create_lab4_collection()
+        if st.session_state.collection:
+            st.session_state.system_ready = True
+            st.success("AI ChatBot is Ready!!!")
         else:
-            error("Failed to create or load the document collection. Please check the file path and try again.")
+            st.error("Failed to create or load the document collection. Please check the file path and try again.")
 
 # Only show the chat interface if the system is ready
-if session_state.system_ready and session_state.collection:
-    subheader("Chat with the AI Assistant")
+if st.session_state.system_ready and st.session_state.collection:
+    st.subheader("Chat with the AI Assistant")
 
     # Display chat history
-    for message in session_state.chat_history:
+    for message in st.session_state.chat_history:
         if isinstance(message, dict):
-            with chat_message(message["role"]):
-                markdown(message["content"])
+            with st.chat_message(message["role"]):
+                st.markdown(message["content"])
         elif isinstance(message, tuple):
             role, content = message
-            with chat_message("user" if role == "You" else "assistant"):
-                markdown(content)
+            with st.chat_message("user" if role == "You" else "assistant"):
+                st.markdown(content)
 
     # Choose summary option
-    answer_option = sidebar.selectbox(
+    answer_option = st.sidebar.selectbox(
         "Choose an Answer type:",
         ["Summarize in 100 words", "Summarize in 2 connecting paragraphs", "Summarize in 5 bullet points"]
     )
 
     # Dropdown menu for language selection
-    language_option = selectbox(
+    language_option = st.selectbox(
         "Choose output language:",
         ["English", "French", "Spanish"]
     )
 
     # User input
-    user_input = chat_input("Ask a question about the documents:")
+    user_input = st.chat_input("Ask a question about the documents:")
 
     if user_input:
-        with chat_message("user"):
-            markdown(user_input)
+        with st.chat_message("user"):
+            st.markdown(user_input)
 
         # Query the vector database
-        relevant_texts, relevant_docs = query_vector_db(session_state.collection, user_input)
+        relevant_texts, relevant_docs = query_vector_db(st.session_state.collection, user_input)
         context = "\n".join(relevant_texts)
 
         # Get streaming chatbot response with selected language
         response_stream = get_chatbot_response(user_input, context, language_option, answer_option)
 
         # Display AI response
-        with chat_message("assistant"):
-            response_placeholder = empty()
+        with st.chat_message("assistant"):
+            response_placeholder = st.empty()
             full_response = ""
             for chunk in response_stream:
                 if chunk.choices[0].delta.content is not None:
@@ -187,10 +186,10 @@ if session_state.system_ready and session_state.collection:
             response_placeholder.markdown(full_response)
 
         # Add to chat history (new format)
-        session_state.chat_history.append({"role": "user", "content": user_input})
-        session_state.chat_history.append({"role": "assistant", "content": full_response})
+        st.session_state.chat_history.append({"role": "user", "content": user_input})
+        st.session_state.chat_history.append({"role": "assistant", "content": full_response})
 
         # Display relevant documents
-        with expander("Relevant documents used"):
+        with st.expander("Relevant documents used"):
             for doc in relevant_docs:
-                write(f"- {doc}")
+                st.write(f"- {doc}")
