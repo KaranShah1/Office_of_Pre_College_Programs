@@ -10,6 +10,15 @@ sys.modules['sqlite3'] = sys.modules.pop('pysqlite3')
 
 import chromadb
 
+# Hide Streamlit style elements
+hide_streamlit_style = """
+            <style>
+            #MainMenu {visibility: hidden;}
+            footer {visibility: hidden;}
+            </style>
+            """
+st.markdown(hide_streamlit_style, unsafe_allow_html=True)
+
 # Function to ensure the OpenAI client is initialized
 def ensure_openai_client():
     if 'openai_client' not in st.session_state:
