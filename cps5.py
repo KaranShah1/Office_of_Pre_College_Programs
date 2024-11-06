@@ -163,8 +163,19 @@ if st.session_state.system_ready and st.session_state.collection:
         "Choose an Answer type:",
         ["Summarize in 100 words", "Summarize in 2 connecting paragraphs", "Summarize in 5 bullet points"]
     )
+            
+            dropdown_style = """
+                <style>
+                .stSelectbox {
+                    border: 2px solid #4CAF50;  /* Adjust color and thickness */
+                    border-radius: 5px;         /* Optional: rounded corners */
+                    padding: 5px;               /* Optional: spacing */
+                }
+                </style>
+            
 
-    # Dropdown menu for language selection
+            
+            # Dropdown menu for language selection
     language_option = st.selectbox(
         "Choose output language:",
         ["English", "French", "Spanish"]
