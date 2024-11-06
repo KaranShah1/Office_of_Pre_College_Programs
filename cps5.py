@@ -163,6 +163,16 @@ if st.session_state.system_ready and st.session_state.collection:
         "Choose an Answer type:",
         ["Summarize in 100 words", "Summarize in 2 connecting paragraphs", "Summarize in 5 bullet points"]
     )
+    # Add custom CSS styling for select box
+dropdown_style = """
+    <style>
+    /* Apply styles to Streamlit selectbox */
+    div[data-baseweb="select"] {
+        border: 2px solid #4CAF50;  /* Adjust color and thickness */
+        border-radius: 5px;         /* Optional: rounded corners */
+        padding: 5px;               /* Optional: spacing */
+    }
+    </style>
     
     # Dropdown menu for language selection
     language_option = st.selectbox(
