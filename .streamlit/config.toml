@@ -1,3 +1,10 @@
 [theme]
 base="light"
 primaryColor="#d44500"
+
+
+[server]
+headless = true
+
+[browser]
+serverAddress = "0.0.0.0"
