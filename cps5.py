@@ -10,6 +10,13 @@ sys.modules['sqlite3'] = sys.modules.pop('pysqlite3')
 
 import chromadb
 
+# Add custom CSS to hide the GitHub icon
+hide_github_icon = """
+#GithubIcon {
+  visibility: hidden;
+}
+"""
+
 # Hide Streamlit style elements
 hide_streamlit_style = """
             <style>
