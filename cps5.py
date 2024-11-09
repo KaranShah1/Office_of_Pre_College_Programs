@@ -12,14 +12,10 @@ import chromadb
 
 # Add custom CSS to hide the GitHub icon
 hide_github_icon = """
-<style>
 #GithubIcon {
   visibility: hidden;
 }
-</style>
 """
-st.markdown(hide_github_icon, unsafe_allow_html=True)
-
 
 # Hide Streamlit style elements
 hide_streamlit_style = """
@@ -199,12 +195,11 @@ if st.session_state.system_ready and st.session_state.collection:
         with st.chat_message("assistant"):
             response_placeholder = st.empty()
             full_response = ""
-            if response_stream:
-                for chunk in response_stream:
-                    if chunk.choices[0].delta.content is not None:
-                        full_response += chunk.choices[0].delta.content
-                        response_placeholder.markdown(full_response + "▌")
-                response_placeholder.markdown(full_response)
+            for chunk in response_stream:
+                if chunk.choices[0].delta.content is not None:
+                    full_response += chunk.choices[0].delta.content
+                    response_placeholder.markdown(full_response + "▌")
+            response_placeholder.markdown(full_response)
 
         # Add to chat history (new format)
         st.session_state.chat_history.append({"role": "user", "content": user_input})
@@ -213,4 +208,4 @@ if st.session_state.system_ready and st.session_state.collection:
         # Display relevant documents
         with st.expander("Relevant documents used"):
             for doc in relevant_docs:
-                st.write(f"- {doc}")
+                st.write(f"- {doc}") Check error in this code
