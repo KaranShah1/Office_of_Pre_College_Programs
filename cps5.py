@@ -208,4 +208,5 @@ if st.session_state.system_ready and st.session_state.collection:
         # Display relevant documents
         with st.expander("Relevant documents used"):
             for doc in relevant_docs:
-                st.write(f"- {doc}") Check error in this code
+                st.write(f"- {doc}")
+
