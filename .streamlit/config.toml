@@ -2,6 +2,9 @@
 base="light"
 primaryColor="#d44500"
 
-[ui]
-hide_github_button = true  # This will hide the GitHub icon
-hide_fork_button = true  # This will hide the Fork icon
+[server]
+enableCORS = false
+enableXsrfProtection = false
+
+[global]
+disableStreamlitBranding = true
