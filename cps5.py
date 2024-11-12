@@ -22,7 +22,7 @@ hide_streamlit_style = """
             <style>
             #MainMenu {visibility: hidden;}
             footer {visibility: hidden;}
-            .st-emotion-cache-30do4w.e3g6aar1 {visibility: hidden;}
+            .st-emotion-cache-30do4w.e3g6aar1 {display: none;}
             </style>
             """
 st.markdown(hide_streamlit_style, unsafe_allow_html=True)
