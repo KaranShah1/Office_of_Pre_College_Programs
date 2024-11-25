@@ -175,7 +175,7 @@ if st.session_state.system_ready and st.session_state.collection:
     # Dropdown menu for language selection
     language_option = st.selectbox(
         "Choose output language:",
-        ["English", "French", "Spanish"]
+        ["English", "Chinese", "Spanish"]
     )
 
     # User input
