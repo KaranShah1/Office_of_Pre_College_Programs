@@ -14,7 +14,6 @@ with st.sidebar:
         default_index=0,
     )
     
-st.set_page_config(page_title="Interactive Travel Guide Chatbot", page_icon="🌎", layout="wide")
     
 
 # Load the appropriate page based on the user's selection
