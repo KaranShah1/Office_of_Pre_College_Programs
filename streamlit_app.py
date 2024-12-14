@@ -2,7 +2,11 @@ import streamlit as st
 from streamlit_option_menu import option_menu
 
 # Set up the main page configuration
-st.set_page_config(page_title="Interactive Travel Guide Chatbot", page_icon="https://github.com/KaranShah1/Office_of_Pre_College_Programs/blob/main/su.jpg", layout="wide")
+st.set_page_config(
+    page_title="Pre-College Chatbot",
+    page_icon="https://raw.githubusercontent.com/KaranShah1/Office_of_Pre_College_Programs/main/su.jpg",  # Raw URL for the image
+    layout="wide"
+)
 
 # Define navigation with a single active page
 with st.sidebar:
