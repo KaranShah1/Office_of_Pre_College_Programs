@@ -13,10 +13,13 @@ with st.sidebar:
         menu_icon="cast", 
         default_index=0,
     )
+    
+st.set_page_config(page_title="Interactive Travel Guide Chatbot", page_icon="🌎", layout="wide")
+    
 
 # Load the appropriate page based on the user's selection
 if selected_page == "Test Bot":
-    st.title("SU Office of Pre-College Programs  ")
+    st.title("SU Office of Pre-College Programs")
     # Execute the cps1.py code
     exec(open("cps1.py").read())  # This will run the content of cps1.py
 
